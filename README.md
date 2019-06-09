@@ -1,1 +1,0 @@
-# go-merkle-proof
