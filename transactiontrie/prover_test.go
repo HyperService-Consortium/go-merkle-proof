@@ -3,10 +3,10 @@ package prover
 
 import (
 	"testing"
-	"github.com/syndtr/goleveldb/leveldb"
 	"fmt"
-	"github.com/Myriad-Dreamin/go-rlp"
 	"encoding/hex"
+	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/Myriad-Dreamin/go-mpt"
 )
 
 const (
@@ -24,31 +24,23 @@ func checkAll(db *leveldb.DB){
 	}
 }
 
-
-type transactionsEncoding struct {
-	Txs Transactions
-	IdleBytes []byte
-}
-
-
 func TestTxTrieGen(t *testing.T) {
 	var bn uint64 = 1069
 	rootHashStr := "0x4a857b36196d7c7c51466b12297192ea68179b8fc40b751fadfd2e1e5cf57ede"
 	transactionHash := "be6f6acaec1314776bf9117cfcd4e316e00c176cc249a63bc9667d083ab32849"
+	filepath := EDB_PATH
 
-	db, err := leveldb.OpenFile(EDB_PATH, nil)
+	txTrie, err := GenerateTxTrieFromLocal(filepath, bn, rootHashStr)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	var bt trie.Hash
+	bt, err = txTrie.Commit(nil)
 	if err != nil {
 		t.Error(err)
 	}
-	defer db.Close()
-	querynode, err := db.Get(stringtobodykey(bn, rootHashStr), nil)
-	if err != nil {
-		t.Error(err)
-	}
-	var nodeDecode transactionsEncoding
-	// fmt.Println(querynode)
-	err = rlp.DecodeBytes(querynode, &nodeDecode)
-	if hex.EncodeToString(DeriveSha(nodeDecode.Txs)) != transactionHash {
+	if hex.EncodeToString(bt.Bytes()) != transactionHash {
 		t.Errorf("generate error")
 	}
 }

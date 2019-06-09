@@ -1,0 +1,6 @@
+package prover
+
+func MakeProof() {
+	
+}
+
