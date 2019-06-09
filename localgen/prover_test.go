@@ -37,7 +37,7 @@ func TestTxTrieGen(t *testing.T) {
 	transactionHash := "be6f6acaec1314776bf9117cfcd4e316e00c176cc249a63bc9667d083ab32849"
 
 	db, err := leveldb.OpenFile(EDB_PATH, nil)
-    if err != nil {
+	if err != nil {
 		t.Error(err)
 	}
 	defer db.Close()
